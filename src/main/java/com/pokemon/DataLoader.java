@@ -56,7 +56,6 @@ public class DataLoader {
     }
 
     // 加载所有数据
-    // 加载所有数据
     public static void loadAllData() throws IOException {
         // 加载技能数据
         MoveList moveList = objectMapper.readValue(

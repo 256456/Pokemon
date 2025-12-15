@@ -17,7 +17,13 @@ public enum Type {
             }
         }
 
-        // 设置属性相克 (简化版)
+        // 设置属性相克 (完整版)
+
+        // 普通系
+        setEffectiveness(NORMAL, ROCK, 0.5);
+        setEffectiveness(NORMAL, STEEL, 0.5);
+        setEffectiveness(NORMAL, GHOST, 0.0);
+
         // 火系
         setEffectiveness(FIRE, GRASS, 2.0);
         setEffectiveness(FIRE, ICE, 2.0);
@@ -66,10 +72,27 @@ public enum Type {
         setEffectiveness(ICE, ICE, 0.5);
         setEffectiveness(ICE, STEEL, 0.5);
 
-        // 龙系
-        setEffectiveness(DRAGON, DRAGON, 2.0);
-        setEffectiveness(DRAGON, STEEL, 0.5);
-        setEffectiveness(DRAGON, FAIRY, 0.0);
+        // 格斗系
+        setEffectiveness(FIGHTING, NORMAL, 2.0);
+        setEffectiveness(FIGHTING, ICE, 2.0);
+        setEffectiveness(FIGHTING, ROCK, 2.0);
+        setEffectiveness(FIGHTING, DARK, 2.0);
+        setEffectiveness(FIGHTING, STEEL, 2.0);
+        setEffectiveness(FIGHTING, POISON, 0.5);
+        setEffectiveness(FIGHTING, FLYING, 0.5);
+        setEffectiveness(FIGHTING, PSYCHIC, 0.5);
+        setEffectiveness(FIGHTING, BUG, 0.5);
+        setEffectiveness(FIGHTING, FAIRY, 0.5);
+        setEffectiveness(FIGHTING, GHOST, 0.0);
+
+        // 毒系
+        setEffectiveness(POISON, GRASS, 2.0);
+        setEffectiveness(POISON, FAIRY, 2.0);
+        setEffectiveness(POISON, POISON, 0.5);
+        setEffectiveness(POISON, GROUND, 0.5);
+        setEffectiveness(POISON, ROCK, 0.5);
+        setEffectiveness(POISON, GHOST, 0.5);
+        setEffectiveness(POISON, STEEL, 0.0);
 
         // 地面系
         setEffectiveness(GROUND, FIRE, 2.0);
@@ -89,12 +112,69 @@ public enum Type {
         setEffectiveness(FLYING, ROCK, 0.5);
         setEffectiveness(FLYING, STEEL, 0.5);
 
-        // 普通系
-        setEffectiveness(NORMAL, ROCK, 0.5);
-        setEffectiveness(NORMAL, STEEL, 0.5);
-        setEffectiveness(NORMAL, GHOST, 0.0);
-    }
+        // 超能力系
+        setEffectiveness(PSYCHIC, FIGHTING, 2.0);
+        setEffectiveness(PSYCHIC, POISON, 2.0);
+        setEffectiveness(PSYCHIC, PSYCHIC, 0.5);
+        setEffectiveness(PSYCHIC, STEEL, 0.5);
+        setEffectiveness(PSYCHIC, DARK, 0.0);
 
+        // 虫系
+        setEffectiveness(BUG, GRASS, 2.0);
+        setEffectiveness(BUG, PSYCHIC, 2.0);
+        setEffectiveness(BUG, DARK, 2.0);
+        setEffectiveness(BUG, FIRE, 0.5);
+        setEffectiveness(BUG, FIGHTING, 0.5);
+        setEffectiveness(BUG, POISON, 0.5);
+        setEffectiveness(BUG, FLYING, 0.5);
+        setEffectiveness(BUG, GHOST, 0.5);
+        setEffectiveness(BUG, STEEL, 0.5);
+        setEffectiveness(BUG, FAIRY, 0.5);
+
+        // 岩石系
+        setEffectiveness(ROCK, FIRE, 2.0);
+        setEffectiveness(ROCK, ICE, 2.0);
+        setEffectiveness(ROCK, FLYING, 2.0);
+        setEffectiveness(ROCK, BUG, 2.0);
+        setEffectiveness(ROCK, FIGHTING, 0.5);
+        setEffectiveness(ROCK, GROUND, 0.5);
+        setEffectiveness(ROCK, STEEL, 0.5);
+
+        // 幽灵系
+        setEffectiveness(GHOST, PSYCHIC, 2.0);
+        setEffectiveness(GHOST, GHOST, 2.0);
+        setEffectiveness(GHOST, DARK, 0.5);
+        setEffectiveness(GHOST, NORMAL, 0.0);
+
+        // 龙系
+        setEffectiveness(DRAGON, DRAGON, 2.0);
+        setEffectiveness(DRAGON, STEEL, 0.5);
+        setEffectiveness(DRAGON, FAIRY, 0.0);
+
+        // 恶系
+        setEffectiveness(DARK, PSYCHIC, 2.0);
+        setEffectiveness(DARK, GHOST, 2.0);
+        setEffectiveness(DARK, FIGHTING, 0.5);
+        setEffectiveness(DARK, DARK, 0.5);
+        setEffectiveness(DARK, FAIRY, 0.5);
+
+        // 钢系
+        setEffectiveness(STEEL, ICE, 2.0);
+        setEffectiveness(STEEL, ROCK, 2.0);
+        setEffectiveness(STEEL, FAIRY, 2.0);
+        setEffectiveness(STEEL, FIRE, 0.5);
+        setEffectiveness(STEEL, WATER, 0.5);
+        setEffectiveness(STEEL, ELECTRIC, 0.5);
+        setEffectiveness(STEEL, STEEL, 0.5);
+
+        // 妖精系
+        setEffectiveness(FAIRY, FIGHTING, 2.0);
+        setEffectiveness(FAIRY, DRAGON, 2.0);
+        setEffectiveness(FAIRY, DARK, 2.0);
+        setEffectiveness(FAIRY, FIRE, 0.5);
+        setEffectiveness(FAIRY, POISON, 0.5);
+        setEffectiveness(FAIRY, STEEL, 0.5);
+    }
     private static void setEffectiveness(Type attack, Type defense, double multiplier) {
         effectivenessTable[attack.ordinal()][defense.ordinal()] = multiplier;
     }
