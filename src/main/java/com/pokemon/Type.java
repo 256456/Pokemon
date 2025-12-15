@@ -1,0 +1,117 @@
+package com.pokemon;
+
+public enum Type {
+    NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, FIGHTING, POISON, GROUND,
+    FLYING, PSYCHIC, BUG, ROCK, GHOST, DRAGON, DARK, STEEL, FAIRY;
+
+    private static final double[][] effectivenessTable;
+
+    static {
+        int size = values().length;
+        effectivenessTable = new double[size][size];
+
+        // 初始化所有为1.0
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                effectivenessTable[i][j] = 1.0;
+            }
+        }
+
+        // 设置属性相克 (简化版)
+        // 火系
+        setEffectiveness(FIRE, GRASS, 2.0);
+        setEffectiveness(FIRE, ICE, 2.0);
+        setEffectiveness(FIRE, BUG, 2.0);
+        setEffectiveness(FIRE, STEEL, 2.0);
+        setEffectiveness(FIRE, WATER, 0.5);
+        setEffectiveness(FIRE, ROCK, 0.5);
+        setEffectiveness(FIRE, FIRE, 0.5);
+        setEffectiveness(FIRE, DRAGON, 0.5);
+
+        // 水系
+        setEffectiveness(WATER, FIRE, 2.0);
+        setEffectiveness(WATER, GROUND, 2.0);
+        setEffectiveness(WATER, ROCK, 2.0);
+        setEffectiveness(WATER, WATER, 0.5);
+        setEffectiveness(WATER, GRASS, 0.5);
+        setEffectiveness(WATER, DRAGON, 0.5);
+
+        // 草系
+        setEffectiveness(GRASS, WATER, 2.0);
+        setEffectiveness(GRASS, GROUND, 2.0);
+        setEffectiveness(GRASS, ROCK, 2.0);
+        setEffectiveness(GRASS, FIRE, 0.5);
+        setEffectiveness(GRASS, GRASS, 0.5);
+        setEffectiveness(GRASS, POISON, 0.5);
+        setEffectiveness(GRASS, FLYING, 0.5);
+        setEffectiveness(GRASS, BUG, 0.5);
+        setEffectiveness(GRASS, DRAGON, 0.5);
+        setEffectiveness(GRASS, STEEL, 0.5);
+
+        // 电系
+        setEffectiveness(ELECTRIC, WATER, 2.0);
+        setEffectiveness(ELECTRIC, FLYING, 2.0);
+        setEffectiveness(ELECTRIC, GROUND, 0.0);
+        setEffectiveness(ELECTRIC, GRASS, 0.5);
+        setEffectiveness(ELECTRIC, ELECTRIC, 0.5);
+        setEffectiveness(ELECTRIC, DRAGON, 0.5);
+
+        // 冰系
+        setEffectiveness(ICE, GRASS, 2.0);
+        setEffectiveness(ICE, GROUND, 2.0);
+        setEffectiveness(ICE, FLYING, 2.0);
+        setEffectiveness(ICE, DRAGON, 2.0);
+        setEffectiveness(ICE, FIRE, 0.5);
+        setEffectiveness(ICE, WATER, 0.5);
+        setEffectiveness(ICE, ICE, 0.5);
+        setEffectiveness(ICE, STEEL, 0.5);
+
+        // 龙系
+        setEffectiveness(DRAGON, DRAGON, 2.0);
+        setEffectiveness(DRAGON, STEEL, 0.5);
+        setEffectiveness(DRAGON, FAIRY, 0.0);
+
+        // 地面系
+        setEffectiveness(GROUND, FIRE, 2.0);
+        setEffectiveness(GROUND, ELECTRIC, 2.0);
+        setEffectiveness(GROUND, POISON, 2.0);
+        setEffectiveness(GROUND, ROCK, 2.0);
+        setEffectiveness(GROUND, STEEL, 2.0);
+        setEffectiveness(GROUND, GRASS, 0.5);
+        setEffectiveness(GROUND, BUG, 0.5);
+        setEffectiveness(GROUND, FLYING, 0.0);
+
+        // 飞行系
+        setEffectiveness(FLYING, GRASS, 2.0);
+        setEffectiveness(FLYING, FIGHTING, 2.0);
+        setEffectiveness(FLYING, BUG, 2.0);
+        setEffectiveness(FLYING, ELECTRIC, 0.5);
+        setEffectiveness(FLYING, ROCK, 0.5);
+        setEffectiveness(FLYING, STEEL, 0.5);
+
+        // 普通系
+        setEffectiveness(NORMAL, ROCK, 0.5);
+        setEffectiveness(NORMAL, STEEL, 0.5);
+        setEffectiveness(NORMAL, GHOST, 0.0);
+    }
+
+    private static void setEffectiveness(Type attack, Type defense, double multiplier) {
+        effectivenessTable[attack.ordinal()][defense.ordinal()] = multiplier;
+    }
+
+    public static double getEffectiveness(Type attack, Type defense) {
+        return effectivenessTable[attack.ordinal()][defense.ordinal()];
+    }
+
+    public static String getTypeEffectivenessMessage(double effectiveness) {
+        if (effectiveness == 0.0) {
+            return "没有效果...";
+        } else if (effectiveness > 1.0) {
+            return "效果拔群！";
+        } else if (effectiveness < 1.0) {
+            return "效果不理想...";
+        } else {
+            return "";
+        }
+    }
+}

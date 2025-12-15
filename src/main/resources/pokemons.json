@@ -1,0 +1,148 @@
+{
+  "pokemons": [
+    {
+      "name": "喷火龙",
+      "types": ["FIRE", "FLYING"],
+      "baseStats": {
+        "hp": 78,
+        "attack": 84,
+        "defense": 78,
+        "specialAttack": 109,
+        "specialDefense": 85,
+        "speed": 100
+      }
+    },
+    {
+      "name": "水箭龟",
+      "types": ["WATER"],
+      "baseStats": {
+        "hp": 79,
+        "attack": 83,
+        "defense": 100,
+        "specialAttack": 85,
+        "specialDefense": 105,
+        "speed": 78
+      }
+    },
+    {
+      "name": "妙蛙花",
+      "types": ["GRASS", "POISON"],
+      "baseStats": {
+        "hp": 80,
+        "attack": 82,
+        "defense": 83,
+        "specialAttack": 100,
+        "specialDefense": 100,
+        "speed": 80
+      }
+    },
+    {
+      "name": "皮卡丘",
+      "types": ["ELECTRIC"],
+      "baseStats": {
+        "hp": 35,
+        "attack": 55,
+        "defense": 40,
+        "specialAttack": 50,
+        "specialDefense": 50,
+        "speed": 90
+      }
+    },
+    {
+      "name": "暴鲤龙",
+      "types": ["WATER", "FLYING"],
+      "baseStats": {
+        "hp": 95,
+        "attack": 125,
+        "defense": 79,
+        "specialAttack": 60,
+        "specialDefense": 100,
+        "speed": 81
+      }
+    },
+    {
+      "name": "快龙",
+      "types": ["DRAGON", "FLYING"],
+      "baseStats": {
+        "hp": 91,
+        "attack": 134,
+        "defense": 95,
+        "specialAttack": 100,
+        "specialDefense": 100,
+        "speed": 80
+      }
+    },
+    {
+      "name": "卡比兽",
+      "types": ["NORMAL"],
+      "baseStats": {
+        "hp": 160,
+        "attack": 110,
+        "defense": 65,
+        "specialAttack": 65,
+        "specialDefense": 110,
+        "speed": 30
+      }
+    },
+    {
+      "name": "风速狗",
+      "types": ["FIRE"],
+      "baseStats": {
+        "hp": 90,
+        "attack": 110,
+        "defense": 80,
+        "specialAttack": 100,
+        "specialDefense": 80,
+        "speed": 95
+      }
+    },
+    {
+      "name": "烈咬陆鲨",
+      "types": ["DRAGON", "GROUND"],
+      "baseStats": {
+        "hp": 108,
+        "attack": 130,
+        "defense": 95,
+        "specialAttack": 80,
+        "specialDefense": 85,
+        "speed": 102
+      }
+    },
+    {
+      "name": "拉普拉斯",
+      "types": ["WATER", "ICE"],
+      "baseStats": {
+        "hp": 130,
+        "attack": 85,
+        "defense": 80,
+        "specialAttack": 85,
+        "specialDefense": 95,
+        "speed": 60
+      }
+    },
+    {
+      "name": "电龙",
+      "types": ["ELECTRIC"],
+      "baseStats": {
+        "hp": 90,
+        "attack": 75,
+        "defense": 85,
+        "specialAttack": 115,
+        "specialDefense": 90,
+        "speed": 55
+      }
+    },
+    {
+      "name": "暴飞龙",
+      "types": ["DRAGON", "FLYING"],
+      "baseStats": {
+        "hp": 95,
+        "attack": 135,
+        "defense": 80,
+        "specialAttack": 110,
+        "specialDefense": 80,
+        "speed": 100
+      }
+    }
+  ]
+}

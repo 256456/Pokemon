@@ -1,0 +1,252 @@
+{
+  "moves": [
+    {
+      "name": "喷射火焰",
+      "type": "FIRE",
+      "category": "SPECIAL",
+      "power": 90,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "水炮",
+      "type": "WATER",
+      "category": "SPECIAL",
+      "power": 110,
+      "accuracy": 80,
+      "pp": 5
+    },
+    {
+      "name": "十万伏特",
+      "type": "ELECTRIC",
+      "category": "SPECIAL",
+      "power": 90,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "地震",
+      "type": "GROUND",
+      "category": "PHYSICAL",
+      "power": 100,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "冰冻光束",
+      "type": "ICE",
+      "category": "SPECIAL",
+      "power": 90,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "龙爪",
+      "type": "DRAGON",
+      "category": "PHYSICAL",
+      "power": 80,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "空气斩",
+      "type": "FLYING",
+      "category": "SPECIAL",
+      "power": 75,
+      "accuracy": 95,
+      "pp": 15
+    },
+    {
+      "name": "波导弹",
+      "type": "FIGHTING",
+      "category": "SPECIAL",
+      "power": 90,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "污泥炸弹",
+      "type": "POISON",
+      "category": "SPECIAL",
+      "power": 90,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "日光束",
+      "type": "GRASS",
+      "category": "SPECIAL",
+      "power": 120,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "冰冻牙",
+      "type": "ICE",
+      "category": "PHYSICAL",
+      "power": 65,
+      "accuracy": 95,
+      "pp": 15
+    },
+    {
+      "name": "龙之舞",
+      "type": "DRAGON",
+      "category": "STATUS",
+      "power": null,
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "冰冻拳",
+      "type": "ICE",
+      "category": "PHYSICAL",
+      "power": 75,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "神速",
+      "type": "NORMAL",
+      "category": "PHYSICAL",
+      "power": 80,
+      "accuracy": 100,
+      "pp": 5
+    },
+    {
+      "name": "电光一闪",
+      "type": "NORMAL",
+      "category": "PHYSICAL",
+      "power": 40,
+      "accuracy": 100,
+      "pp": 30
+    },
+    {
+      "name": "铁尾",
+      "type": "STEEL",
+      "category": "PHYSICAL",
+      "power": 100,
+      "accuracy": 75,
+      "pp": 15
+    },
+    {
+      "name": "伏特攻击",
+      "type": "ELECTRIC",
+      "category": "PHYSICAL",
+      "power": 120,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "加农水炮",
+      "type": "WATER",
+      "category": "SPECIAL",
+      "power": 150,
+      "accuracy": 90,
+      "pp": 5
+    },
+    {
+      "name": "光合作用",
+      "type": "GRASS",
+      "category": "STATUS",
+      "power": null,
+      "accuracy": 100,
+      "pp": 5
+    },
+    {
+      "name": "泰山压顶",
+      "type": "NORMAL",
+      "category": "PHYSICAL",
+      "power": 85,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "火焰拳",
+      "type": "FIRE",
+      "category": "PHYSICAL",
+      "power": 75,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "雷电拳",
+      "type": "ELECTRIC",
+      "category": "PHYSICAL",
+      "power": 75,
+      "accuracy": 100,
+      "pp": 15
+    },
+    {
+      "name": "火焰轮",
+      "type": "FIRE",
+      "category": "PHYSICAL",
+      "power": 60,
+      "accuracy": 100,
+      "pp": 25
+    },
+    {
+      "name": "雷电牙",
+      "type": "ELECTRIC",
+      "category": "PHYSICAL",
+      "power": 65,
+      "accuracy": 95,
+      "pp": 15
+    },
+    {
+      "name": "火焰牙",
+      "type": "FIRE",
+      "category": "PHYSICAL",
+      "power": 65,
+      "accuracy": 95,
+      "pp": 15
+    },
+    {
+      "name": "逆鳞",
+      "type": "DRAGON",
+      "category": "PHYSICAL",
+      "power": 120,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "龙之波动",
+      "type": "DRAGON",
+      "category": "SPECIAL",
+      "power": 85,
+      "accuracy": 100,
+      "pp": 10
+    },
+    {
+      "name": "打雷",
+      "type": "ELECTRIC",
+      "category": "SPECIAL",
+      "power": 110,
+      "accuracy": 70,
+      "pp": 10
+    },
+    {
+      "name": "力量宝石",
+      "type": "ROCK",
+      "category": "SPECIAL",
+      "power": 80,
+      "accuracy": 100,
+      "pp": 20
+    },
+    {
+      "name": "电磁炮",
+      "type": "ELECTRIC",
+      "category": "SPECIAL",
+      "power": 120,
+      "accuracy": 50,
+      "pp": 5
+    },
+    {
+      "name": "燕返",
+      "type": "FLYING",
+      "category": "PHYSICAL",
+      "power": 60,
+      "accuracy": 100,
+      "pp": 20
+    }
+  ]
+}
