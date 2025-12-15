@@ -21,6 +21,7 @@ public class Battle {
         turnCount++;
         System.out.println("\n=== 第 " + turnCount + " 回合 ===");
 
+        applyStartOfTurnStatusEffects();
         // 检查宝可梦状态
         checkPokemonStatus();
         if (isBattleOver) return;
@@ -36,10 +37,29 @@ public class Battle {
         checkBattleEnd();
     }
 
+    private void applyStartOfTurnStatusEffects() {
+        Pokemon playerPokemon = player.getActivePokemon();
+        Pokemon opponentPokemon = opponent.getActivePokemon();
+
+        // 玩家宝可梦状态伤害
+        if (!playerPokemon.isFainted()) {
+            playerPokemon.applyStatusDamage();
+            if (playerPokemon.isFainted()) {
+                System.out.println(playerPokemon.getName() + " 倒下了！");
+            }
+        }
+
+        // 对手宝可梦状态伤害
+        if (!opponentPokemon.isFainted()) {
+            opponentPokemon.applyStatusDamage();
+            if (opponentPokemon.isFainted()) {
+                System.out.println(opponentPokemon.getName() + " 倒下了！");
+            }
+        }
+    }
     private void checkPokemonStatus() {
         // 检查玩家宝可梦
         if (player.getActivePokemon().isFainted()) {
-            System.out.println(player.getActivePokemon().getName() + "倒下了！");
             if (player.hasUsablePokemon()) {
                 playerSwitchPokemon();
             } else {
@@ -50,7 +70,6 @@ public class Battle {
 
         // 检查对手宝可梦
         if (opponent.getActivePokemon().isFainted()) {
-            System.out.println(opponent.getActivePokemon().getName() + "倒下了！");
             if (opponent.hasUsablePokemon()) {
                 opponentSwitchPokemonAI();
             } else {
@@ -69,12 +88,24 @@ public class Battle {
                 opponentPokemon.getCurrentHP() + "/" + opponentPokemon.getMaxHP());
         System.out.println("属性: " + getTypesString(opponentPokemon));
 
+        // 显示状态
+        String opponentStatus = opponentPokemon.getStatusString();
+        if (!opponentStatus.isEmpty()) {
+            System.out.println("状态: " + opponentStatus);
+        }
+
         System.out.println("\nVS\n");
 
         System.out.println(player.getName() + "的 " + playerPokemon.getName());
         System.out.println("HP: [" + getHealthBar(playerPokemon) + "] " +
                 playerPokemon.getCurrentHP() + "/" + playerPokemon.getMaxHP());
         System.out.println("属性: " + getTypesString(playerPokemon));
+
+        // 显示状态
+        String playerStatus = playerPokemon.getStatusString();
+        if (!playerStatus.isEmpty()) {
+            System.out.println("状态: " + playerStatus);
+        }
     }
 
     private String getHealthBar(Pokemon pokemon) {
@@ -281,47 +312,48 @@ public class Battle {
             return;
         }
 
-        // 使用技能
-        move.use();
+        // 检查是否能行动（考虑状态）
+        if (!attacker.canAttackThisTurn()) {return;}
 
-        // 检查命中
-        if (!move.hitCheck()) {
+        // 使用技能
+        Move.MoveResult result = move.use(attacker, defender);
+
+        if (!result.hit) {
             System.out.println(trainerName + "的" + attacker.getName() + "的" + move.getName() + "没有命中！");
             return;
         }
 
-        // 检查要害
-        boolean isCritical = move.checkCriticalHit();
-
-        // 计算伤害
-        int damage = move.calculateDamage(attacker, defender, isCritical);
-
         // 显示攻击信息
         System.out.print(trainerName + "的" + attacker.getName() + "使用了" + move.getName() + "！");
 
-        if (isCritical) {
-            System.out.print(" 击中要害！");
-        }
+        // 如果是攻击技能，显示伤害信息
+        if (move.getCategory() != Move.Category.STATUS) {
+            // 检查属性相克
+            double effectiveness = 1.0;
+            for (Type defenderType : defender.getTypes()) {
+                effectiveness *= Type.getEffectiveness(move.getType(), defenderType);
+            }
 
-        // 检查属性相克
-        double effectiveness = 1.0;
-        for (Type defenderType : defender.getTypes()) {
-            effectiveness *= Type.getEffectiveness(move.getType(), defenderType);
-        }
+            String effectivenessMsg = Type.getTypeEffectivenessMessage(effectiveness);
+            if (!effectivenessMsg.isEmpty()) {
+                System.out.print(" " + effectivenessMsg);
+            }
+            System.out.println();
+            System.out.println("造成了 " + result.damage + " 点伤害！");
 
-        String effectivenessMsg = Type.getTypeEffectivenessMessage(effectiveness);
-        if (!effectivenessMsg.isEmpty()) {
-            System.out.print(" " + effectivenessMsg);
-        }
-        System.out.println();
-
-        // 造成伤害（如果有效）
-        if (effectiveness > 0) {
-            boolean fainted = defender.takeDamage(damage);
-            System.out.println("对" + defender.getName() + "造成了" + damage + "点伤害！");
-
-            if (fainted) {
+            if (result.fainted) {
                 System.out.println(defender.getName() + "倒下了！");
+            }
+
+            // 在伤害信息之后打印状态消息
+            if (result.statusMessage != null) {
+                System.out.println(result.statusMessage);
+            }
+        } else {
+            System.out.println();
+            // 对于状态技能，直接打印状态消息
+            if (result.statusMessage != null) {
+                System.out.println(result.statusMessage);
             }
         }
     }

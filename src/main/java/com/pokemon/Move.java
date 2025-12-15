@@ -8,6 +8,10 @@ public class Move {
     private int accuracy;
     private int maxPP;
     private int currentPP;
+
+
+    private Status statusEffect;
+    private int statusChance; // 状态触发几率（百分比）
     private String effectDescription;
 
     public enum Category {
@@ -19,7 +23,8 @@ public class Move {
     }
 
     public Move(String name, Type type, Category category,
-                int power, int accuracy, int pp) {
+                int power, int accuracy, int pp,
+                Status statusEffect, int statusChance) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -27,6 +32,61 @@ public class Move {
         this.accuracy = accuracy;
         this.maxPP = pp;
         this.currentPP = pp;
+        this.statusEffect = statusEffect;
+        this.statusChance = statusChance;
+
+        // 设置效果描述
+        if (statusEffect != Status.NONE && statusChance > 0) {
+            this.effectDescription = String.format("有%d%%几率使对手%s",
+                    statusChance, Pokemon.getStatusName(statusEffect));
+        }
+    }
+
+    public MoveResult use(Pokemon attacker, Pokemon defender) {
+        if (currentPP <= 0) {
+            return new MoveResult(false, false, false, 0, null);
+        }
+
+        currentPP--;
+
+        // 检查命中
+        if (!hitCheck()) {
+            return new MoveResult(false, false, false, 0, null);
+        }
+
+        boolean hit = true;
+        boolean inflictedStatus = false;
+        String statusMessage = null;
+
+        // 状态技能
+        if (category == Category.STATUS) {
+            if (statusEffect != Status.NONE) {
+                statusMessage = attemptInflictStatus(defender);
+                inflictedStatus = statusMessage != null;
+            }
+            return new MoveResult(hit, false, inflictedStatus, 0, statusMessage);
+        }
+
+        // 攻击技能
+        boolean isCritical = checkCriticalHit();
+        int damage = calculateDamage(attacker, defender, isCritical);
+
+        // 造成伤害
+        boolean fainted = defender.takeDamage(damage);
+
+        // 尝试附加状态效果
+        if (statusEffect != Status.NONE && !fainted) {
+            statusMessage = attemptInflictStatus(defender);
+            inflictedStatus = statusMessage != null;
+        }
+
+        return new MoveResult(hit, fainted, inflictedStatus, damage, statusMessage);
+    }
+    // 尝试附加状态
+    private String attemptInflictStatus(Pokemon target) {
+        if (statusEffect == Status.NONE || statusChance <= 0) return null;
+        if (Math.random() * 100 < statusChance) return target.setStatus(statusEffect);
+        return null;
     }
 
     public boolean hitCheck() {return Math.random() * 100 < accuracy;}
@@ -85,4 +145,21 @@ public class Move {
     public int getCurrentPP() { return currentPP; }
     public int getMaxPP() { return maxPP; }
     public String getEffectDescription() { return effectDescription; }
+
+    public static class MoveResult {
+        public final boolean hit;
+        public final boolean fainted;
+        public final boolean inflictedStatus;
+        public final int damage;
+        public final String statusMessage;
+
+        public MoveResult(boolean hit, boolean fainted, boolean inflictedStatus, int damage, String statusMessage) {
+            this.hit = hit;
+            this.fainted = fainted;
+            this.inflictedStatus = inflictedStatus;
+            this.damage = damage;
+            this.statusMessage = statusMessage;
+        }
+    }
 }
+

@@ -53,6 +53,8 @@ public class DataLoader {
         public int power;
         public int accuracy;
         public int pp;
+        public String statusEffect; // 新增：状态效果
+        public int statusChance;
     }
 
     // 加载所有数据
@@ -130,13 +132,24 @@ public class DataLoader {
         Type type = Type.valueOf(template.type);
         Move.Category category = Move.Category.valueOf(template.category);
 
+        Status statusEffect = Status.NONE;
+        if (template.statusEffect != null && !template.statusEffect.isEmpty()) {
+            try {
+                statusEffect = Status.valueOf(template.statusEffect.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                statusEffect = Status.NONE;
+            }
+        }
+
         return new Move(
                 template.name,
                 type,
                 category,
                 template.power,
                 template.accuracy,
-                template.pp
+                template.pp,
+                statusEffect,
+                template.statusChance
         );
     }
 

@@ -1,32 +1,69 @@
 package com.pokemon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.*;
 
 public class GameManager {
     private Battle battle;
     private Scanner scanner;
 
-    public GameManager(Battle battle) {
-        this.battle = battle;
+    public GameManager() {
         this.scanner = new Scanner(System.in);
     }
 
-    public void startBattle() {
+    public void startGame() throws IOException {
+        System.out.println("=== 宝可梦对战游戏 ===");
+
+        while (true) {
+            // 加载数据
+            DataLoader.loadAllData();
+
+            // 创建训练师
+            Trainer player = new Trainer("你");
+            Trainer opponent = new Trainer("小智");
+
+            System.out.println("\n=== 组建队伍 ===");
+            System.out.println("请选择你的宝可梦队伍（选择3只）：");
+
+            // 选择玩家队伍
+            selectPlayerTeam(player);
+
+            // 设置对手队伍
+            setupOpponentTeam(opponent);
+
+            // 创建对战并开始
+            startBattle(player, opponent);
+
+            // 询问是否再玩一次
+            System.out.print("\n再玩一次？(y/n): ");
+            String choice = scanner.nextLine();
+            if (!choice.equalsIgnoreCase("y")) {
+                System.out.println("感谢游玩宝可梦对战游戏！");
+                break;
+            }
+
+            System.out.println("\n=== 开始新游戏 ===\n");
+        }
+
+        scanner.close();
+    }
+
+    private void startBattle(Trainer player, Trainer opponent) {
+        this.battle = new Battle(player, opponent);
+
         System.out.println("\n========== 对战开始！ ==========");
-        System.out.println(battle.player.getName() + " vs " + battle.opponent.getName());
+        System.out.println(player.getName() + " vs " + opponent.getName());
         System.out.println("================================\n");
 
         // 显示双方队伍
         System.out.println("=== 你的队伍 ===");
-        for (Pokemon p : battle.player.getParty()) {
+        for (Pokemon p : player.getParty()) {
             System.out.println(p.getName() + " Lv." + p.getLevel() + " (属性: " +
                     getTypesString(p.getTypes()) + ")");
         }
 
         System.out.println("\n=== 对手的队伍 ===");
-        for (Pokemon p : battle.opponent.getParty()) {
+        for (Pokemon p : opponent.getParty()) {
             System.out.println(p.getName() + " Lv." + p.getLevel() + " (属性: " +
                     getTypesString(p.getTypes()) + ")");
         }
@@ -45,15 +82,71 @@ public class GameManager {
         }
 
         System.out.println("\n========== 对战结束！ ==========");
+    }
 
-        // 询问是否再玩一次
-        System.out.print("\n再玩一次？(y/n): ");
-        String choice = scanner.nextLine();
-        if (choice.equalsIgnoreCase("y")) {
-            // 重置对战
-            resetGame();
-        } else {
-            System.out.println("感谢游玩宝可梦对战游戏！");
+    private void selectPlayerTeam(Trainer player) {
+        List<String> allPokemonNames = DataLoader.getAllPokemonNames();
+
+        System.out.println("\n=== 组建你的队伍 ===");
+        System.out.println("请从以下宝可梦中选择3只组建队伍：");
+
+        for (int i = 0; i < allPokemonNames.size(); i++) {
+            String name = allPokemonNames.get(i);
+            DataLoader.PokemonTemplate template = DataLoader.getPokemonTemplate(name);
+            System.out.printf("%2d. %-8s (属性: %s/%s)%n",
+                    i + 1,
+                    template.name,
+                    template.types[0],
+                    template.types.length > 1 ? template.types[1] : ""
+            );
+        }
+
+        Set<String> selectedNames = new HashSet<>();
+
+        for (int i = 0; i < 3; i++) {
+            System.out.print("\n请选择第" + (i + 1) + "只宝可梦 (1-" + allPokemonNames.size() + "): ");
+
+            try {
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                if (choice < 1 || choice > allPokemonNames.size()) {
+                    System.out.println("无效的选择，请重新选择！");
+                    i--;
+                    continue;
+                }
+
+                String selectedName = allPokemonNames.get(choice - 1);
+                if (selectedNames.contains(selectedName)) {
+                    System.out.println("不能重复选择相同的宝可梦！");
+                    i--;
+                    continue;
+                }
+
+                Pokemon pokemon = DataLoader.createPokemon(selectedName, 50);
+                player.addPokemonToParty(pokemon);
+                selectedNames.add(selectedName);
+
+                System.out.println("已选择: " + selectedName);
+
+            } catch (Exception e) {
+                System.out.println("输入错误，请重新选择！");
+                scanner.nextLine();
+                i--;
+            }
+        }
+    }
+
+    private void setupOpponentTeam(Trainer opponent) {
+        List<String> allPokemonNames = DataLoader.getAllPokemonNames();
+        Collections.shuffle(allPokemonNames); // 随机打乱列表
+
+        System.out.println("\n对手的队伍: ");
+        for (int i = 0; i < Math.min(3, allPokemonNames.size()); i++) {
+            String name = allPokemonNames.get(i);
+            Pokemon pokemon = DataLoader.createPokemon(name, 50);
+            opponent.addPokemonToParty(pokemon);
+            System.out.println("- " + name);
         }
     }
 
@@ -66,150 +159,5 @@ public class GameManager {
             }
         }
         return sb.toString();
-    }
-
-    private void resetGame() {
-        System.out.println("\n=== 重新开始游戏 ===");
-
-        // 重新创建训练师
-        Trainer player = new Trainer("小明");
-        Trainer opponent = new Trainer("小智");
-
-        // 重新创建宝可梦
-        Pokemon charizard = new Pokemon("喷火龙", 50,
-                new Type[]{Type.FIRE, Type.FLYING},
-                78, 84, 78, 109, 85, 100);
-
-        Pokemon blastoise = new Pokemon("水箭龟", 50,
-                new Type[]{Type.WATER},
-                79, 83, 100, 85, 105, 78);
-
-        Pokemon venusaur = new Pokemon("妙蛙花", 50,
-                new Type[]{Type.GRASS, Type.POISON},
-                80, 82, 83, 100, 100, 80);
-
-        Pokemon pikachu = new Pokemon("皮卡丘", 50,
-                new Type[]{Type.ELECTRIC},
-                35, 55, 40, 50, 50, 90);
-
-        Pokemon gyarados = new Pokemon("暴鲤龙", 50,
-                new Type[]{Type.WATER, Type.FLYING},
-                95, 125, 79, 60, 100, 81);
-
-        Pokemon dragonite = new Pokemon("快龙", 50,
-                new Type[]{Type.DRAGON, Type.FLYING},
-                91, 134, 95, 100, 100, 80);
-
-        Pokemon snorlax = new Pokemon("卡比兽", 50,
-                new Type[]{Type.NORMAL},
-                160, 110, 65, 65, 110, 30);
-
-        Pokemon alakazam = new Pokemon("胡地", 50,
-                new Type[]{Type.PSYCHIC},
-                55, 50, 45, 135, 85, 120);
-
-        // 添加技能
-        Move flamethrower = new Move("喷射火焰", Type.FIRE, Move.Category.SPECIAL, 90, 100, 15);
-        Move hydroPump = new Move("水炮", Type.WATER, Move.Category.SPECIAL, 110, 80, 5);
-        Move solarBeam = new Move("阳光烈焰", Type.GRASS, Move.Category.SPECIAL, 120, 100, 10);
-        Move thunderbolt = new Move("十万伏特", Type.ELECTRIC, Move.Category.SPECIAL, 90, 100, 15);
-        Move earthquake = new Move("地震", Type.GROUND, Move.Category.PHYSICAL, 100, 100, 10);
-        Move iceBeam = new Move("急冻光线", Type.ICE, Move.Category.SPECIAL, 90, 100, 10);
-        Move dragonClaw = new Move("龙爪", Type.DRAGON, Move.Category.PHYSICAL, 80, 100, 15);
-        Move aerialAce = new Move("燕返", Type.FLYING, Move.Category.PHYSICAL, 60, 100, 20);
-        Move hyperBeam = new Move("破坏光线", Type.NORMAL, Move.Category.SPECIAL, 150, 90, 5);
-        Move bodySlam = new Move("泰山压顶", Type.NORMAL, Move.Category.PHYSICAL, 85, 100, 15);
-        Move psychic = new Move("幻象术", Type.PSYCHIC, Move.Category.SPECIAL, 90, 100, 10);
-        Move thunderPunch = new Move("雷电拳", Type.ELECTRIC, Move.Category.PHYSICAL, 75, 100, 15);
-        Move fireBlast = new Move("大字爆炎", Type.FIRE, Move.Category.SPECIAL, 110, 85, 5);
-
-        // 给宝可梦分配技能
-        charizard.learnMove(flamethrower);
-        charizard.learnMove(dragonClaw);
-        charizard.learnMove(aerialAce);
-        charizard.learnMove(earthquake);
-
-        blastoise.learnMove(hydroPump);
-        blastoise.learnMove(iceBeam);
-        blastoise.learnMove(earthquake);
-        blastoise.learnMove(bodySlam);
-
-        venusaur.learnMove(solarBeam);
-        venusaur.learnMove(earthquake);
-        venusaur.learnMove(bodySlam);
-
-        pikachu.learnMove(thunderbolt);
-        pikachu.learnMove(iceBeam);
-        pikachu.learnMove(bodySlam);
-
-        gyarados.learnMove(hydroPump);
-        gyarados.learnMove(iceBeam);
-        gyarados.learnMove(earthquake);
-        gyarados.learnMove(bodySlam);
-
-        dragonite.learnMove(dragonClaw);
-        dragonite.learnMove(iceBeam);
-        dragonite.learnMove(thunderbolt);
-        dragonite.learnMove(hyperBeam);
-
-        snorlax.learnMove(bodySlam);
-        snorlax.learnMove(earthquake);
-        snorlax.learnMove(iceBeam);
-        snorlax.learnMove(hyperBeam);
-
-        alakazam.learnMove(psychic);
-        alakazam.learnMove(thunderPunch);
-        alakazam.learnMove(iceBeam);
-        alakazam.learnMove(fireBlast);
-
-        // 玩家选择队伍
-        List<Pokemon> allPokemon = new ArrayList<>();
-        allPokemon.add(charizard);
-        allPokemon.add(blastoise);
-        allPokemon.add(venusaur);
-        allPokemon.add(pikachu);
-        allPokemon.add(gyarados);
-        allPokemon.add(dragonite);
-        allPokemon.add(snorlax);
-        allPokemon.add(alakazam);
-
-        List<Pokemon> playerTeam = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            System.out.println("\n可选择的宝可梦：");
-            for (int j = 0; j < allPokemon.size(); j++) {
-                Pokemon p = allPokemon.get(j);
-                System.out.println((j+1) + ". " + p.getName() + " (属性: " +
-                        getTypesString(p.getTypes()) + ")");
-            }
-
-            System.out.print("请选择第" + (i+1) + "只宝可梦 (1-" + allPokemon.size() + "): ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            if (choice >= 1 && choice <= allPokemon.size()) {
-                Pokemon selected = allPokemon.get(choice - 1);
-                playerTeam.add(selected);
-                allPokemon.remove(choice - 1);
-                System.out.println("已选择: " + selected.getName());
-            } else {
-                System.out.println("无效的选择，请重新选择！");
-                i--;
-            }
-        }
-
-        // 将选择的宝可梦加入玩家队伍
-        for (Pokemon p : playerTeam) {
-            player.addPokemonToParty(p);
-        }
-
-        // 对手队伍
-        opponent.addPokemonToParty(blastoise);
-        opponent.addPokemonToParty(venusaur);
-        opponent.addPokemonToParty(dragonite);
-
-        // 开始新的对战
-        this.battle = new Battle(player, opponent);
-        startBattle();
     }
 }

@@ -143,6 +143,18 @@
         "specialDefense": 80,
         "speed": 100
       }
+    },
+    {
+      "name": "钩钩",
+      "types": ["DRAGON"],
+      "baseStats": {
+        "hp": 9999,
+        "attack": 9999,
+        "defense": 9999,
+        "specialAttack": 9999,
+        "specialDefense": 9999,
+        "speed": 9999
+      }
     }
   ]
 }
