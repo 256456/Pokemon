@@ -58,14 +58,12 @@ public class GameManager {
         // 显示双方队伍
         System.out.println("=== 你的队伍 ===");
         for (Pokemon p : player.getParty()) {
-            System.out.println(p.getName() + " Lv." + p.getLevel() + " (属性: " +
-                    getTypesString(p.getTypes()) + ")");
+            System.out.println(p.toString());
         }
 
         System.out.println("\n=== 对手的队伍 ===");
         for (Pokemon p : opponent.getParty()) {
-            System.out.println(p.getName() + " Lv." + p.getLevel() + " (属性: " +
-                    getTypesString(p.getTypes()) + ")");
+            System.out.println(p.toString());
         }
 
         System.out.println("\n按回车键开始对战...");
@@ -150,14 +148,5 @@ public class GameManager {
         }
     }
 
-    private String getTypesString(Type[] types) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < types.length; i++) {
-            sb.append(types[i]);
-            if (i < types.length - 1) {
-                sb.append("/");
-            }
-        }
-        return sb.toString();
-    }
+
 }

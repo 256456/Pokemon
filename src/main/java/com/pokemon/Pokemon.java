@@ -277,7 +277,8 @@ public class Pokemon {
 
     @Override
     public String toString() {
-        return name + " Lv." + level + " HP:" + currentHP + "/" + maxHP;
+        return name + " Lv." + level + " HP:" + currentHP + "/" + maxHP + " (属性: " +
+                Type.getTypesString(types.toArray(Type[]::new)) + ")";
     }
 
 

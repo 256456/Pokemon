@@ -61,7 +61,7 @@ public class Battle {
         // 检查玩家宝可梦
         if (player.getActivePokemon().isFainted()) {
             if (player.hasUsablePokemon()) {
-                playerSwitchPokemon();
+                playerSwitchPokemon(false);
             } else {
                 isBattleOver = true;
                 return;
@@ -188,11 +188,16 @@ public class Battle {
                 executePlayerAttack();
                 break;
             case 2:
-                playerSwitchPokemon();
+                boolean switched = playerSwitchPokemon(true);
+                if (!switched) {
+                    int newAction = getPlayerAction();
+                    executePlayerAction(newAction);
+                }
                 break;
             case 3:
                 viewPokemonInfo();
-                executePlayerAction(getPlayerAction()); // 重新选择行动
+                int newAction = getPlayerAction();
+                executePlayerAction(newAction);
                 break;
             case 4:
                 attemptEscape();
@@ -215,7 +220,7 @@ public class Battle {
         Pokemon attacker = player.getActivePokemon();
         Pokemon defender = opponent.getActivePokemon();
 
-        Move selectedMove = selectPlayerMove(attacker);
+        Move selectedMove = selectPlayerMove(attacker, defender);
         if (selectedMove == null) return;
 
         executeAttack(attacker, defender, selectedMove, player.getName());
@@ -231,7 +236,7 @@ public class Battle {
         executeAttack(attacker, defender, selectedMove, opponent.getName());
     }
 
-    private Move selectPlayerMove(Pokemon pokemon) {
+    private Move selectPlayerMove(Pokemon pokemon,Pokemon defender) {
         List<Move> moves = pokemon.getMoves();
         if (moves.isEmpty()) {
             System.out.println(pokemon.getName() + "没有可以使用的技能！");
@@ -240,7 +245,7 @@ public class Battle {
 
         System.out.println("\n选择技能:");
         for (int i = 0; i < moves.size(); i++) {
-            System.out.println((i+1) + ". " + moves.get(i));
+            System.out.println((i+1) + ". " + moves.get(i)+showMoveEffectiveness(moves.get(i),defender));
         }
 
         while (true) {
@@ -261,6 +266,20 @@ public class Battle {
                 System.out.println("请输入有效数字！");
             }
         }
+    }
+
+    private String showMoveEffectiveness(Move move, Pokemon defender) {
+        double typeEffectiveness = 1.0;
+        // 属性相克
+        for (Type defenderType : defender.getTypes()) {
+            typeEffectiveness *= Type.getEffectiveness(move.getType(), defenderType);
+        }
+
+        if (typeEffectiveness == 0) return "(无效)";
+        else if (typeEffectiveness > 1) return "(效果拔群)";
+        else if (typeEffectiveness < 1 && typeEffectiveness > 0) return "(效果不好)";
+
+        return "";
     }
 
     private Move selectAIMove(Pokemon pokemon) {
@@ -358,7 +377,7 @@ public class Battle {
         }
     }
 
-    private void playerSwitchPokemon() {
+    private boolean playerSwitchPokemon(boolean allowCancel) {
         List<Pokemon> party = player.getParty();
         List<Pokemon> usablePokemon = new ArrayList<>();
 
@@ -373,25 +392,28 @@ public class Battle {
 
         if (usablePokemon.isEmpty()) {
             System.out.println("没有可以替换的宝可梦！");
-            return;
+            return false;
         }
 
-        System.out.println((usablePokemon.size() + 1) + ". 取消");
+        if (allowCancel) {
+            System.out.println((usablePokemon.size() + 1) + ". 取消");
+        }
 
         while (true) {
-            System.out.print("请输入选择 (1-" + (usablePokemon.size() + 1) + "): ");
+            System.out.print("请输入选择 (1-" + (usablePokemon.size() + (allowCancel ? 1 : 0)) + "): ");
             try {
                 int choice = scanner.nextInt();
-                if (choice == usablePokemon.size() + 1) {
-                    return; // 取消
-                }
+
+                if (allowCancel && choice == usablePokemon.size() + 1) return false;
+
                 if (choice >= 1 && choice <= usablePokemon.size()) {
                     Pokemon selected = usablePokemon.get(choice - 1);
                     System.out.println("回来吧，" + player.getActivePokemon().getName() + "！");
                     player.setActivePokemon(selected);
                     System.out.println("去吧，" + selected.getName() + "！");
-                    break;
+                    return true;
                 }
+
                 System.out.println("无效的选择！");
             } catch (Exception e) {
                 scanner.nextLine();

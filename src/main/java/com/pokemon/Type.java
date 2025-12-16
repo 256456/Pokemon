@@ -183,6 +183,17 @@ public enum Type {
         return effectivenessTable[attack.ordinal()][defense.ordinal()];
     }
 
+    public static String getTypesString(Type[] types) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < types.length; i++) {
+            sb.append(types[i]);
+            if (i < types.length - 1) {
+                sb.append("/");
+            }
+        }
+        return sb.toString();
+    }
+
     public static String getTypeEffectivenessMessage(double effectiveness) {
         if (effectiveness == 0.0) {
             return "没有效果...";
