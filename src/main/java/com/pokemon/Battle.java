@@ -9,12 +9,18 @@ public class Battle {
     private boolean isBattleOver;
     private int turnCount;
 
+    // 存储已选择的技能
+    private Move playerSelectedMove;
+    private Move opponentSelectedMove;
+
     public Battle(Trainer player, Trainer opponent) {
         this.player = player;
         this.opponent = opponent;
         this.scanner = new Scanner(System.in);
         this.isBattleOver = false;
         this.turnCount = 0;
+        this.playerSelectedMove = null;
+        this.opponentSelectedMove = null;
     }
 
     public void executeTurn() {
@@ -29,9 +35,33 @@ public class Battle {
         // 显示对战状态
         displayBattleStatus();
 
-        int playerAction = getPlayerAction();
-        int opponentAction = getAIAction();
+        // 重置已选择的技能
+        playerSelectedMove = null;
+        opponentSelectedMove = null;
 
+        // 获取玩家行动
+        int playerAction = getPlayerAction();
+        if (playerAction == 1) { // 攻击
+            // 让玩家选择技能
+            playerSelectedMove = selectPlayerMove(player.getActivePokemon(), opponent.getActivePokemon());
+            if (playerSelectedMove == null) {
+                // 选择技能失败，重新开始回合
+                return;
+            }
+        }
+
+        // 获取对手行动
+        int opponentAction = getAIAction();
+        if (opponentAction == 1) { // 攻击
+            // AI选择技能
+            opponentSelectedMove = selectAIMove(opponent.getActivePokemon());
+            if (opponentSelectedMove == null) {
+                // AI选择技能失败，重新开始回合
+                return;
+            }
+        }
+
+        // 确定并执行行动
         determineAndExecuteActions(playerAction, opponentAction);
 
         checkBattleEnd();
@@ -57,6 +87,7 @@ public class Battle {
             }
         }
     }
+
     private void checkPokemonStatus() {
         // 检查玩家宝可梦
         if (player.getActivePokemon().isFainted()) {
@@ -185,19 +216,36 @@ public class Battle {
     private void executePlayerAction(int action) {
         switch (action) {
             case 1:
-                executePlayerAttack();
+                executePlayerAttackWithSelectedMove();
                 break;
             case 2:
                 boolean switched = playerSwitchPokemon(true);
                 if (!switched) {
+                    // 如果取消更换，重新开始回合
+                    // 重置已选择的技能
+                    playerSelectedMove = null;
+                    // 重新获取玩家行动
                     int newAction = getPlayerAction();
-                    executePlayerAction(newAction);
+                    if (newAction == 1) {
+                        playerSelectedMove = selectPlayerMove(player.getActivePokemon(), opponent.getActivePokemon());
+                    }
+                    if (playerSelectedMove != null || newAction != 1) {
+                        executePlayerAction(newAction);
+                    }
                 }
                 break;
             case 3:
                 viewPokemonInfo();
+                // 重置已选择的技能
+                playerSelectedMove = null;
+                // 重新获取玩家行动
                 int newAction = getPlayerAction();
-                executePlayerAction(newAction);
+                if (newAction == 1) {
+                    playerSelectedMove = selectPlayerMove(player.getActivePokemon(), opponent.getActivePokemon());
+                }
+                if (playerSelectedMove != null || newAction != 1) {
+                    executePlayerAction(newAction);
+                }
                 break;
             case 4:
                 attemptEscape();
@@ -208,7 +256,7 @@ public class Battle {
     private void executeOpponentAction(int action) {
         switch (action) {
             case 1:
-                executeOpponentAttack();
+                executeOpponentAttackWithSelectedMove();
                 break;
             case 2:
                 opponentSwitchPokemonAI();
@@ -216,27 +264,39 @@ public class Battle {
         }
     }
 
-    private void executePlayerAttack() {
+    private void executePlayerAttackWithSelectedMove() {
+        if (playerSelectedMove == null) {
+            return; // 不应该发生
+        }
+
         Pokemon attacker = player.getActivePokemon();
         Pokemon defender = opponent.getActivePokemon();
 
-        Move selectedMove = selectPlayerMove(attacker, defender);
-        if (selectedMove == null) return;
+        // 检查宝可梦是否已经倒下
+        if (attacker.isFainted()) {
+            return;
+        }
 
-        executeAttack(attacker, defender, selectedMove, player.getName());
+        executeAttack(attacker, defender, playerSelectedMove, player.getName());
     }
 
-    private void executeOpponentAttack() {
+    private void executeOpponentAttackWithSelectedMove() {
+        if (opponentSelectedMove == null) {
+            return; // 不应该发生
+        }
+
         Pokemon attacker = opponent.getActivePokemon();
         Pokemon defender = player.getActivePokemon();
 
-        Move selectedMove = selectAIMove(attacker);
-        if (selectedMove == null) return;
+        // 检查宝可梦是否已经倒下
+        if (attacker.isFainted()) {
+            return;
+        }
 
-        executeAttack(attacker, defender, selectedMove, opponent.getName());
+        executeAttack(attacker, defender, opponentSelectedMove, opponent.getName());
     }
 
-    private Move selectPlayerMove(Pokemon pokemon,Pokemon defender) {
+    private Move selectPlayerMove(Pokemon pokemon, Pokemon defender) {
         List<Move> moves = pokemon.getMoves();
         if (moves.isEmpty()) {
             System.out.println(pokemon.getName() + "没有可以使用的技能！");
@@ -245,7 +305,7 @@ public class Battle {
 
         System.out.println("\n选择技能:");
         for (int i = 0; i < moves.size(); i++) {
-            System.out.println((i+1) + ". " + moves.get(i)+showMoveEffectiveness(moves.get(i),defender));
+            System.out.println((i+1) + ". " + moves.get(i) + showMoveEffectiveness(moves.get(i), defender));
         }
 
         while (true) {

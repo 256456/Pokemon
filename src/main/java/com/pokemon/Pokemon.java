@@ -155,17 +155,15 @@ public class Pokemon {
 
     // 检查状态免疫
     private boolean isImmuneToStatus(Status status) {
-        switch (status) {
-            case FREEZE:
+        return switch (status) {
+            case FREEZE ->
                 // 冰属性宝可梦不会冰冻
-                return this.types.contains(Type.ICE);
-            case POISON:
-            case BADLY_POISON:
+                    this.types.contains(Type.ICE);
+            case POISON, BADLY_POISON ->
                 // 毒属性和钢属性免疫中毒
-                return this.types.contains(Type.POISON) || this.types.contains(Type.STEEL);
-            default:
-                return false;
-        }
+                    this.types.contains(Type.POISON) || this.types.contains(Type.STEEL);
+            default -> false;
+        };
     }
 
     // 应用状态伤害（每回合调用）
